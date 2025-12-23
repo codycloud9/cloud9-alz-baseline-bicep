@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "customerName": { "value": "CustomerB" },
+    "environment": { "value": "Prod" },
+    "location": { "value": "westus2" },
+    "costCenter": { "value": "CC-2000" },
+    "owner": { "value": "Cloud9" },
+    "netRgName": { "value": "rg-custB-platform-net-prod" },
+    "hubVnetName": { "value": "vnet-custB-hub-prod" },
+    "hubAddressPrefixes": { "value": ["10.10.0.0/16"] },
+    "spokeVnetName": { "value": "vnet-custB-spoke-prod" },
+    "spokeAddressPrefixes": { "value": ["10.11.0.0/16"] }
+  }
+}
