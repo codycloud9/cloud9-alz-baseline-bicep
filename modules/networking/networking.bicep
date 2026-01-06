@@ -1,10 +1,7 @@
-targetScope = 'subscription'
+targetScope = 'resourceGroup'
 
 @description('Azure region for all networking resources')
 param location string
-
-@description('Resource Group name for networking resources')
-param rgName string
 
 @description('Tags applied to all resources created by this module')
 param tags object
@@ -21,12 +18,6 @@ param spokeVnetName string
 @description('Spoke VNet CIDR(s)')
 param spokeAddressPrefixes array
 
-resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: rgName
-  location: location
-  tags: tags
-}
-
 resource hubVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
   name: hubVnetName
   location: location
@@ -38,19 +29,24 @@ resource hubVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
     subnets: [
       {
         name: 'AzureFirewallSubnet'
-        properties: { addressPrefix: '10.0.0.0/26' }
+        properties: {
+          addressPrefix: '10.0.0.0/26'
+        }
       }
       {
         name: 'GatewaySubnet'
-        properties: { addressPrefix: '10.0.0.64/27' }
+        properties: {
+          addressPrefix: '10.0.0.64/27'
+        }
       }
       {
         name: 'Hub-Shared'
-        properties: { addressPrefix: '10.0.1.0/24' }
+        properties: {
+          addressPrefix: '10.0.1.0/24'
+        }
       }
     ]
   }
-  scope: rg
 }
 
 resource spokeVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
@@ -64,35 +60,42 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
     subnets: [
       {
         name: 'Workload'
-        properties: { addressPrefix: '10.1.1.0/24' }
+        properties: {
+          addressPrefix: '10.1.1.0/24'
+        }
       }
     ]
   }
-  scope: rg
 }
 
 resource peerHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2024-01-01' = {
-  name: '${hubVnet.name}/to-${spokeVnet.name}'
+  name: 'hub-to-spoke'
+  parent: hubVnet
   properties: {
-    remoteVirtualNetwork: { id: spokeVnet.id }
+    remoteVirtualNetwork: {
+      id: spokeVnet.id
+    }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
     allowGatewayTransit: true
+    useRemoteGateways: false
   }
-  scope: rg
 }
 
 resource peerSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2024-01-01' = {
-  name: '${spokeVnet.name}/to-${hubVnet.name}'
+  name: 'spoke-to-hub'
+  parent: spokeVnet
   properties: {
-    remoteVirtualNetwork: { id: hubVnet.id }
+    remoteVirtualNetwork: {
+      id: hubVnet.id
+    }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
+    allowGatewayTransit: false
     useRemoteGateways: true
   }
-  scope: rg
 }
 
 output hubVnetId string = hubVnet.id
 output spokeVnetId string = spokeVnet.id
-output rgId string = rg.id
+
