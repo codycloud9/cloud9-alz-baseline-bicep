@@ -39,11 +39,17 @@ var tags = {
   BaselineVersion: 'v1.0'
 }
 
+resource netRg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
+  name: netRgName
+  location: location
+  tags: tags
+}
+
 module net '../../modules/networking/networking.bicep' = {
   name: 'networking-${customerName}-${environment}'
+  scope: netRg
   params: {
     location: location
-    rgName: netRgName
     tags: tags
     hubVnetName: hubVnetName
     hubAddressPrefixes: hubAddressPrefixes
@@ -54,4 +60,4 @@ module net '../../modules/networking/networking.bicep' = {
 
 output hubVnetId string = net.outputs.hubVnetId
 output spokeVnetId string = net.outputs.spokeVnetId
-output netRgId string = net.outputs.rgId
+output netRgId string = netRg.id
