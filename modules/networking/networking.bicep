@@ -69,7 +69,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
 }
 
 resource peerHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2024-01-01' = {
-  name: 'hub-to-spoke'
+  name: 'to-${spokeVnetName}'
   parent: hubVnet
   properties: {
     remoteVirtualNetwork: {
@@ -77,13 +77,12 @@ resource peerHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeering
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
-    allowGatewayTransit: true
-    useRemoteGateways: false
+    allowGatewayTransit: false
   }
 }
 
 resource peerSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2024-01-01' = {
-  name: 'spoke-to-hub'
+  name: 'to-${hubVnetName}'
   parent: spokeVnet
   properties: {
     remoteVirtualNetwork: {
@@ -91,11 +90,9 @@ resource peerSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeering
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
-    allowGatewayTransit: false
-    useRemoteGateways: true
+    useRemoteGateways: false
   }
 }
 
 output hubVnetId string = hubVnet.id
 output spokeVnetId string = spokeVnet.id
-
