@@ -7,11 +7,19 @@
     "location": { "value": "eastus" },
     "costCenter": { "value": "CC-1000" },
     "owner": { "value": "Cloud9" },
+
     "netRgName": { "value": "rg-custA-platform-net-prod" },
+
     "hubVnetName": { "value": "vnet-custA-hub-prod" },
-    "hubAddressPrefixes": { "value": ["10.0.0.0/16"] },
+    "hubAddressPrefixes": { "value": ["192.168.0.0/16"] },
+
     "spokeVnetName": { "value": "vnet-custA-spoke-prod" },
-    "spokeAddressPrefixes": { "value": ["10.1.0.0/16"] },
+    "spokeAddressPrefixes": { "value": ["192.169.0.0/16"] },
+
+    "firewallSubnetPrefix": { "value": "192.168.0.0/26" },
+    "gatewaySubnetPrefix": { "value": "192.168.0.64/27" },
+    "hubSharedSubnetPrefix": { "value": "192.168.1.0/24" },
+    "workloadSubnetPrefix": { "value": "192.169.1.0/24" },
 
     "rbacPrincipalId": { "value": "4641f6ce-5f7e-4413-919d-622368ae6d2f" },
     "rbacRoleName": { "value": "Reader" }
