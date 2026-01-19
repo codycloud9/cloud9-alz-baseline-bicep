@@ -30,6 +30,16 @@ param spokeVnetName string
 @description('Spoke CIDR(s)')
 param spokeAddressPrefixes array
 
+@description('Entra Object ID (principalId) of the group to grant landing zone access to')
+param rbacPrincipalId string
+
+@allowed([
+  'Reader'
+  'Contributor'
+])
+@description('RBAC role to assign')
+param rbacRoleName string = 'Reader'
+
 var tags = {
   Customer: customerName
   Environment: environment
@@ -58,6 +68,16 @@ module net '../../modules/networking/networking.bicep' = {
   }
 }
 
+module rbac '../../modules/identity/rbac.bicep' = {
+  name: 'rbac-${customerName}-${environment}'
+  params: {
+    principalId: rbacPrincipalId
+    roleName: rbacRoleName
+  }
+}
+
 output hubVnetId string = net.outputs.hubVnetId
 output spokeVnetId string = net.outputs.spokeVnetId
 output netRgId string = netRg.id
+output rbacRoleAssigned string = rbac.outputs.roleAssigned
+output rbacPrincipalAssigned string = rbac.outputs.principalAssigned
