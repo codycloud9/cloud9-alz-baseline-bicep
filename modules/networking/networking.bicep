@@ -18,6 +18,18 @@ param spokeVnetName string
 @description('Spoke VNet CIDR(s)')
 param spokeAddressPrefixes array
 
+@description('Hub subnet prefix for AzureFirewallSubnet')
+param firewallSubnetPrefix string
+
+@description('Hub subnet prefix for GatewaySubnet')
+param gatewaySubnetPrefix string
+
+@description('Hub subnet prefix for shared services subnet')
+param hubSharedSubnetPrefix string
+
+@description('Spoke subnet prefix for workload subnet')
+param workloadSubnetPrefix string
+
 resource hubVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
   name: hubVnetName
   location: location
@@ -30,19 +42,19 @@ resource hubVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
       {
         name: 'AzureFirewallSubnet'
         properties: {
-          addressPrefix: '10.0.0.0/26'
+          addressPrefix: firewallSubnetPrefix
         }
       }
       {
         name: 'GatewaySubnet'
         properties: {
-          addressPrefix: '10.0.0.64/27'
+          addressPrefix: gatewaySubnetPrefix
         }
       }
       {
         name: 'Hub-Shared'
         properties: {
-          addressPrefix: '10.0.1.0/24'
+          addressPrefix: hubSharedSubnetPrefix
         }
       }
     ]
@@ -61,7 +73,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
       {
         name: 'Workload'
         properties: {
-          addressPrefix: '10.1.1.0/24'
+          addressPrefix: workloadSubnetPrefix
         }
       }
     ]
