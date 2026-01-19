@@ -7,7 +7,6 @@
     "location": { "value": "eastus" },
     "costCenter": { "value": "CC-1000" },
     "owner": { "value": "Cloud9" },
-
     "netRgName": { "value": "rg-custA-platform-net-prod" },
 
     "hubVnetName": { "value": "vnet-custA-hub-prod" },
