@@ -30,6 +30,18 @@ param spokeVnetName string
 @description('Spoke CIDR(s)')
 param spokeAddressPrefixes array
 
+@description('Hub subnet prefix for AzureFirewallSubnet')
+param firewallSubnetPrefix string
+
+@description('Hub subnet prefix for GatewaySubnet')
+param gatewaySubnetPrefix string
+
+@description('Hub subnet prefix for shared services subnet')
+param hubSharedSubnetPrefix string
+
+@description('Spoke subnet prefix for workload subnet')
+param workloadSubnetPrefix string
+
 @description('Entra Object ID (principalId) of the group to grant landing zone access to')
 param rbacPrincipalId string
 
@@ -65,6 +77,11 @@ module net '../../modules/networking/networking.bicep' = {
     hubAddressPrefixes: hubAddressPrefixes
     spokeVnetName: spokeVnetName
     spokeAddressPrefixes: spokeAddressPrefixes
+
+    firewallSubnetPrefix: firewallSubnetPrefix
+    gatewaySubnetPrefix: gatewaySubnetPrefix
+    hubSharedSubnetPrefix: hubSharedSubnetPrefix
+    workloadSubnetPrefix: workloadSubnetPrefix
   }
 }
 
