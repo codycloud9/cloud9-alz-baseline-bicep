@@ -11,6 +11,9 @@
     "hubVnetName": { "value": "vnet-custB-hub-prod" },
     "hubAddressPrefixes": { "value": ["10.10.0.0/16"] },
     "spokeVnetName": { "value": "vnet-custB-spoke-prod" },
-    "spokeAddressPrefixes": { "value": ["10.11.0.0/16"] }
+    "spokeAddressPrefixes": { "value": ["10.11.0.0/16"] },
+
+    "rbacPrincipalId": { "value": "600a3908-7db7-4c5d-9388-cf4202cde0d4" },
+    "rbacRoleName": { "value": "Reader" }
   }
 }
