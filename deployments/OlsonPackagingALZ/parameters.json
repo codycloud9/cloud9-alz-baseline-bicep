@@ -7,6 +7,7 @@
     "location": { "value": "eastus" },
     "costCenter": { "value": "CC-1000" },
     "owner": { "value": "Cloud9" },
+
     "netRgName": { "value": "rg-custA-platform-net-prod" },
 
     "hubVnetName": { "value": "vnet-custA-hub-prod" },
@@ -21,6 +22,22 @@
     "workloadSubnetPrefix": { "value": "192.169.1.0/24" },
 
     "rbacPrincipalId": { "value": "4641f6ce-5f7e-4413-919d-622368ae6d2f" },
-    "rbacRoleName": { "value": "Reader" }
+    "rbacRoleName": { "value": "Reader" },
+
+    /* ===================== */
+    /* Governance Parameters */
+    /* ===================== */
+
+    "govNamePrefix": { "value": "alz-custa-prod-eus" },
+
+    "allowedLocations": {
+      "value": ["eastus"]
+    },
+
+    "allowedLocationsPolicyDefinitionId": {
+      "value": "/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c"
+    },
+
+    "enableDeleteLock": { "value": true }
   }
 }
