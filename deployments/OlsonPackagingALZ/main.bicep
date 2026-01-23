@@ -52,6 +52,20 @@ param rbacPrincipalId string
 @description('RBAC role to assign')
 param rbacRoleName string = 'Reader'
 
+/*** GOVERNANCE (Allowed Locations + Delete Lock) ***/
+
+@description('Name prefix for governance artifacts (policy assignment / lock). Example: alz-olson-prod-eus')
+param govNamePrefix string
+
+@description('Allowed Azure locations for this subscription. Example: ["eastus"]')
+param allowedLocations array
+
+@description('Built-in policy definition id for Allowed locations')
+param allowedLocationsPolicyDefinitionId string = '/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c'
+
+@description('Enable delete lock (CanNotDelete) on the landing zone networking RG')
+param enableDeleteLock bool = true
+
 var tags = {
   Customer: customerName
   Environment: environment
@@ -93,8 +107,46 @@ module rbac '../../modules/identity/rbac.bicep' = {
   }
 }
 
+/*** Governance: Allowed Locations Policy Assignment ***/
+module governance '../../modules/governance/policy-assignments.bicep' = {
+  name: 'governance-${customerName}-${environment}'
+  params: {
+    assignmentLocation: location
+    namePrefix: govNamePrefix
+
+    enableAllowedLocations: true
+    allowedLocations: allowedLocations
+
+    // keep off for now to avoid breaking customer deployments
+    enableAllowedVmSkus: false
+    allowedVmSkus: []
+
+    enableAllowedResourceTypes: false
+    allowedResourceTypes: []
+
+    allowedLocationsPolicyDefinitionId: allowedLocationsPolicyDefinitionId
+
+    // placeholders (required by module if you left them as required params).
+    // If your policy-assignments.bicep defines these as optional with defaults, you can remove these two lines.
+    allowedVmSkusPolicyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/00000000-0000-0000-0000-000000000000'
+    allowedResourceTypesPolicyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/00000000-0000-0000-0000-000000000000'
+  }
+}
+
+/*** Governance: Delete Lock (NOT a policy) ***/
+module deleteLock '../../modules/governance/delete-lock.bicep' = if (enableDeleteLock) {
+  name: 'deleteLock-${customerName}-${environment}'
+  params: {
+    rgName: netRgName
+    lockName: '${govNamePrefix}-cannotdelete'
+  }
+}
+
 output hubVnetId string = net.outputs.hubVnetId
 output spokeVnetId string = net.outputs.spokeVnetId
 output netRgId string = netRg.id
 output rbacRoleAssigned string = rbac.outputs.roleAssigned
 output rbacPrincipalAssigned string = rbac.outputs.principalAssigned
+
+output allowedLocationsPolicyAssignmentName string = governance.outputs.allowedLocationsAssignmentName
+output deleteLockId string = enableDeleteLock ? deleteLock.outputs.lockId : ''
